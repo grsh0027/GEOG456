@@ -14,7 +14,7 @@
      crossorigin=""></script>
 
 <style>
-    #mapi{height: 500px; width: 500px}
+    #mapi{height: 600px; width: 600px}
 </style>
 
 <body>
@@ -22,17 +22,17 @@
     <div id="mapi"></div>
 
     <script>
-    var myMap = L.map('mapi').setView([35.91314065418229, -79.0595054626465], 13);
+    var myMap = L.map('mapi').setView([39.73729032077588, -104.996337890625], 11);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(myMap);
 
 
-var daMarker = L.marker([35.91314, -79.05950]).addTo(myMap);
+var daMarker = L.marker([39.73729, -104.99633]).addTo(myMap);
 
 
-daMarker.bindPopup("<b>Chapel Hill, NC (pop. 61,128)</b><br> Home to the oldest public university in the U.S. ").openPopup();
+daMarker.bindPopup("<b>Denver, CO (pop. 711,463)</b><br> The mile high city: Elev. 5,280 feet ").openPopup();
 circle.bindPopup("I am a circle.");
 polygon.bindPopup("I am a polygon.");
 
