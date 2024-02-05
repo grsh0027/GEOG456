@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=
+    , initial-scale=1.0">
+    <title>Hurricane Grace</title>
+</head>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+crossorigin=""/>
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+
+   
+
+     <body>
+
+        <a href="https://en.wikipedia.org/wiki/Hurricane_Grace"><H1>Hurricane Grace</H1></a>
+
+        <a href="https://en.wikipedia.org/wiki/Hurricane_Grace#/media/File:Grace_2021-08-21_0610Z.jpg">
+            <img src="./Grace_2021-08-21_0610Z.jpg" width=" 300"></a>
+
+
+
+       
+     <div id="map"></div>
+
+     <style>
+         #map { height: 500px; width: 500px }
+     </style>
+    
+   <script src="./Grace.js"></script>
+    
+    <script>
+
+
+
+
+        var map = L.map('map').setView([17.1, -68.1], 3);
+
+        var OSM = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        var Esri_OceanBasemap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS, OSU, UNH, CSUMB, National Geographic, DeLorme, NAVTEQ, and Esri',
+        maxZoom: 13
+        }).addTo(map);
+
+        
+        // Do I need this below?
+        // L.geoJSON(storm).addTo(map);
+        //Will this layer show anything?
+
+    
+        var HurricaneLandfall = L.marker([20.6, -97.2]).addTo(map);
+
+        var geojsonMarkerOptions = {
+    radius: 5,
+    fillColor: "#FF0000",
+    color: "#4287f5",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.8
+};
+
+
+var StormPath = L.geoJSON(storm, {
+    pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, geojsonMarkerOptions);
+    }
+}).addTo(map);
+
+
+var baseMaps = {
+    "Open Street Map": OSM,
+    "Esri Ocean Map": Esri_OceanBasemap
+};
+
+var overlayMaps = {
+    "Storm Path": StormPath,
+    "Hurricane Land Fall": HurricaneLandfall
+};
+
+
+var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+
+
+        
+    </script>
+
+
+   
+    
+
+</body>
+</html>

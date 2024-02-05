@@ -1,4 +1,4 @@
-{
+var storm = {
     "type": "FeatureCollection",
     "name": "GRACE",
     "features": [
