@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <script src="../Hmwk5/USMigration.js"></script>
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+<title>Migration into Colorado</title>
+
+<h2>Migration by State into Colorado</h2>
+
+<table id="myTable">
+  <tr>
+    <th>Origin State Code</th>
+    <th>Destination State Code</th>
+    <th>Destination State</th>
+    <th>Numb of Returns</th>
+    <th>Individuals</th>
+    <th>AGI In Thousands</th>
+  </tr>
+  
+</table>
+
+<script> 
+    var x = document.getElementById('myTable')
+    
+        for (var i = 0; i<data.features.length; i++){
+        var myNewRow = document.createElement('tr')
+        var myNewCell1 = document.createElement('td')
+        var myNewCell2 = document.createElement('td')
+        var myNewCell3 = document.createElement('td')
+        var myNewCell4 = document.createElement('td')
+        var myNewCell5 = document.createElement('td')
+        var myNewCell6 = document.createElement('td')
+
+            myNewCell1.innerText = data.features[i].properties.OrgStCode;
+            myNewCell2.innerText = data.features[i].properties.DstStCode;
+            myNewCell3.innerText = data.features[i].properties.DestState;
+            myNewCell4.innerText = data.features[i].properties.Returns;
+            myNewCell5.innerText = data.features[i].properties.Individuals;
+            myNewCell6.innerText = data.features[i].properties.AGI;
+
+            myNewRow.append(myNewCell1)
+            myNewRow.append(myNewCell2)
+            myNewRow.append(myNewCell3)
+            myNewRow.append(myNewCell4)
+            myNewRow.append(myNewCell5)
+            myNewRow.append(myNewCell6)
+            x.append(myNewRow)
+    
+        }
+    </script>
+</body>
+</html>
+
