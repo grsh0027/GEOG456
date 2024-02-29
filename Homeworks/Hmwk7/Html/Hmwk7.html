@@ -28,7 +28,7 @@ crossorigin=""/>
 
   <h6>***Data intentionally skips from 2012 to 2019 to better visually demonstrate change over time*** <br>I'm still figuring out the best way to format the data </br></h6>
 
-    <h3 id="theYears">Migration Years</h3>
+    <h3 id="theYears">2012</h3>
 
 <input id="myRange" type="range" name = "MigYears" value="0" min="0" max="3" oninput="moveSlider(this.value)">
 
@@ -66,7 +66,13 @@ crossorigin=""/>
         map.addLayer(MigYears); // add the new layer
         document.getElementById('theYears').innerHTML = order[value] // change the text above the slider
     }
-    moveSlider(0)
+   // moveSlider(0)
+
+   window.onload = function() {
+	
+    slider.value = 1;
+        
+    };
 
     </script>
 
