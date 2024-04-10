@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buttons</title>
+</head>
+<body>
+<h3>UNC Chapel Hill</h3>
+<h3>Click the Buttons to Change the Year <br> Text Will Change Too</h3>
+<div id="yearchange">UNC 2005</div>
+    <html> 
+<head> 
+
+
+<script> 
+
+
+
+
+function changeImage2005()
+{
+var img = document.getElementById("image");
+img.src="../GEE_ImagesFinal/Match2005.png";
+document.getElementById('yearchange').innerText="UNC 2005"
+}
+
+function changeImage2012()
+{
+var img = document.getElementById("image");
+img.src="../GEE_ImagesFinal/Match2012.png";
+document.getElementById('yearchange').innerText="UNC 2012";
+}
+
+function changeImage2020()
+{
+var img = document.getElementById("image");
+img.src="../GEE_ImagesFinal/Match2020.png";
+document.getElementById('yearchange').innerText="UNC 2020"
+}
+
+
+</script>
+
+</head>
+<body>
+<img id="image" src= "../GEE_ImagesFinal/Match2005.png" />
+<div class="button_example">
+    <button id="Button1" onclick="changeImage2005(); ">UNC 2005</button><br>
+    <button id="Button2" onclick="changeImage2012();">UNC 2012</button><br>
+    <button id="Button3" onclick="changeImage2020();">UNC 2020</button><br>
+    </div>
+
+    
+
+
+</body>
+    
+</html>
+
+
+
+
+</body>
+</html>

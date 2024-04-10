@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joshua Garcia Homework 08</title>
+    <style>
+        img{
+            display: none}
+    </style>
+</head>
+<body>
+    <h1>Winston-Salem, NC, 2005-2020</h1>
+    <h2>Joshua Garcia: Homework 08</h2>
+    <h3 id="comment">Click the button to change the visual.</h3>
+    <div id="container" onclick="myFunction()">
+    <button id="myButton1" onclick="show2005()">View 2005</button><br>
+    <button id="myButton2" onclick="show2010()">View 2010</button><br>
+    <button id="myButton3" onclick="show2020()">View 2020</button><br>
+    
+    <img id="2020" class="" src="img2020.png" alt="" height="400px">
+    <img id='2010' class="" src="img2010.png" alt="" height="400px">
+    <img id='2005' class="" src="img2005.png" alt="" height="400px">
+
+
+
+
+
+
+    <script>
+        function show2005() {
+            document.getElementById('2005')
+                .style.display = "block";
+            document.getElementById("2020").style.display = "none"
+            document.getElementById("2010").style.display = "none"
+            document.getElementById('comment').innerText="Winston-Salem in 2005";
+        }
+
+
+        function show2010() {
+            document.getElementById('2010')
+                .style.display = "block";
+            document.getElementById("2020").style.display = "none"
+            document.getElementById("2005").style.display = "none"
+            document.getElementById('comment').innerText="Winston-Salem in 2010";
+        }
+
+
+        function show2020() {
+            document.getElementById('2020')
+                .style.display = "block";
+            document.getElementById("2010").style.display = "none"
+            document.getElementById("2005").style.display = "none"
+            document.getElementById('comment').innerText="Winston-Salem in 2020";
+        }
+    
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+<h1>UNC Chapel Hill</h1>
+<h3>Click the Buttons to Change the Images</h3>
+<div id="yearchange"></div>
+<div id="container" onclick="myFunction()"></div>
+<img id = "2005" src="../GEE_ImagesFinal/Match2005.png" alt="">
+<img id = "2012" src="../GEE_ImagesFinal/Match2012.png" alt="">
+<img id="2020" src="../GEE_ImagesFinal/Match2020.png" alt="">
+
+<button id="Button1" onclick="img2005()">UNC 2005</button><br>
+<button id="Button2" onclick="img2012()">UNC 2010</button><br>
+<button id="Button3" onclick="img2020()">UNC 2020</button><br>
+
+
+<script>
+        function img2005() {
+            document.getElementById('2005')
+                .style.display = "block";
+            document.getElementById("2012").style.display = "none"
+            document.getElementById("2020").style.display = "none"
+            document.getElementById('comment').innerText="UNC Chapel Hill 2005";
+        }
+
+        function img2012() {
+            document.getElementById('2012')
+                .style.display = "block";
+            document.getElementById("2005").style.display = "none"
+            document.getElementById("2020").style.display = "none"
+            document.getElementById('comment').innerText="UNC Chapel Hill 2012";
+        }
+
+        function img2020() {
+            document.getElementById('2020')
+                .style.display = "block";
+            document.getElementById("2005").style.display = "none"
+            document.getElementById("2012").style.display = "none"
+            document.getElementById('comment').innerText="UNC Chapel Hill 2020";
+        }
+
+
+</script>
+
+
+
+
+
+</body>
+
+
+
+
+
+
+</html>
