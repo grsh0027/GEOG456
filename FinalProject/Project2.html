@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migration Raleigh/Durham Metros</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+
+    <script src="./Counties.js"></script>
+</head>
+
+<body>
+
+    <div id="map"></div>
+    
+    <style>#map { height: 500px; width: 600px }</style>
+
+    <input type="range" name="year" value="2013" min="2012" max="2021" oninput="moveSlider(this.value)">
+    <div class="legend"></div>
+   
+    <select id="dataSelect">
+        <option value="NetReturns">NetReturns</option>
+        <option value="NetIndividuals">NetIndividuals</option>
+        <option value="RealNetAGI">RealNetAGI</option>
+        <option value="Sign">PerHouseholdIncomeFlow</option>
+
+    </select>
+    
+    <!-- //Added Script form Stack exchange -->
+    <script> 
+       
+//   document.getElementById('dataSelect').addEventListener('change', function() {
+//           console.log(this.value);
+//         });
+
+// Get the <select> element
+    var selectElement = document.getElementById('dataSelect');
+    
+    // Add an event listener
+    selectElement.addEventListener('change', function() {
+        // Get the selected value
+        var selectedValue = selectElement.value;
+    
+        // Call your function with the selected value
+        myFunction(selectedData);
+    });
+    
+    // Define your function
+    function myFunction(value) {
+        // Use the selected value in your logic
+        console.log("Selected value:", value);
+        // You can perform other actions based on the value
+    }
+    
+</script>
+    
+    
+
+    <script>  
+        var map = L.map('map').setView([39.6, -97.6], 3.35);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var selectedYear = 2012; // Initialize selectedYear
+        var selectedData = 'NetReturns'
+
+        //Script from HMWK 7
+
+        function moveSlider(value) {
+            selectedYear = value; // Update the selectedYear when the slider value changes
+            updateMap(); // Call a function to update the map based on the new selected year
+        }
+
+        
+        document.getElementById('dataSelect').addEventListener('change', function() {
+            selectedData = this.value; // Update selectedData when dropdown value changes
+            updateMap(); // Call a function to update the map based on the new selected year and data
+        });
+
+
+
+        // function updateMap() {
+        //     // Assuming you have the GeoJSON data stored in 'Counties' variable
+        //     // Loop through each feature of the GeoJSON data and apply the style
+        //     Counties.features.forEach(function(feature) {
+        //         // Apply style based on the updated selectedYear
+        //         L.geoJSON(feature, {style: function(feature) { return myStyle(feature, selectedYear); }}).addTo(map);
+        //     });
+        // }
+
+
+        function updateMap() {
+            // Clear existing layers
+            map.eachLayer(function(layer) {
+                if (layer instanceof L.GeoJSON) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            // Add new layers for the selected year
+            Counties.features.forEach(function(feature) {
+                L.geoJSON(feature, {
+                    style: function(feature) { return myStyle(feature, selectedData); },
+                    onEachFeature: function (feature, layer) {
+                        layer.bindPopup('<h2>' + feature.properties.NAME + '</h2>' +
+                        '<p>' + selectedData + ': ' + feature.properties[selectedData + selectedYear] + '</p>');
+                    }
+                }).addTo(map);
+            });
+        }
+       
+       
+        function myStyle(feature, selectedData) {
+            var propertyName = selectedData + selectedYear;
+            var propertyValue = feature.properties[propertyName]; // Get the value of the property for the selected year
+
+            return {
+                "fillColor": getColor(propertyValue),
+                "color": "black",
+                "weight": 0.75,
+                "opacity": 2.0,
+                "fillOpacity": 0.7
+            };
+        }
+
+        function getColor(propertyValue) {
+    if (propertyValue === null) {
+        return "#CCCCCC"; // Gray color for null values
+    } else {
+        return propertyValue < 0 ? " #f5fa7c":
+        propertyValue < 10 ? "#eddafa " 
+            : propertyValue < 100 ? "#cf9ef1" 
+            : propertyValue < 600 ? " #8309d8 "
+            : "#200035";
+    }
+};
+        updateMap(); // Call updateMap initially to load the map with the initial selectedYear
+
+
+        function showCountyInfo(feature) {
+            countyInfo.innerHTML = '<h2>' + feature.properties.NAME + '</h2>' +
+                '<p>Net Individuals: ' + feature.properties['NetIndividuals' + selectedYear] + '</p>';
+        }
+
+        updateMap();
+    </script>
+
+</body>
+</html>
