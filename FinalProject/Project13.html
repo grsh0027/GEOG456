@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migration Raleigh/Durham Metros</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+
+    <script src="./Counties.js"></script>
+
+    <style>
+        /* Reduce spacing between h1 and h2 */
+        h1 {margin-top: 2.5px;
+            margin-bottom: 0px;
+            text-align: center; /* Reduce margin-bottom */
+            font-size: 20pt;
+        }
+
+        h2 {
+            margin-top: 0px; /* Reduce margin-top */
+            margin-bottom: 2.5px;
+            text-align: center;
+            font-size: 16pt;
+            
+        }
+        h3{margin-top: 0px; /* Reduce margin-top */
+            margin-bottom: 4px;}
+        h6{font-size: 14pt;}
+        p{font-size: 12pt;
+            margin-top: 0px; /* Reduce margin-top */
+            margin-bottom: 2.5px; }
+    </style>
+</head>
+
+<h1>Tracking In and Out Migration for the Research Triangle with IRS Tax Data</h1>
+<h2>&#40Exludes North Carolina Counties&#41</h2>
+<body>
+
+    <!-- Map container -->
+    <div id="map"></div>
+
+    <style>
+        /* Style for map container */
+        #map { height: 425px; width: 100% }
+    
+        /* Style for legend */
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 12px;
+        }
+        .legend div {
+            margin-bottom: 5px;
+        }
+        .legend span {
+            display: inline-block;
+            width: 25px;
+            height: 10px;
+            margin-right: 5px;
+        }
+
+    /* Remove the previous styling for #dataSelect and .slider-container */
+#dataSelect {
+    justify-content: left;
+    width: 270px; /* Adjust the width as needed */
+    height: 30px; /* Adjust the height as needed */
+    font-size: 18px; /* Adjust the font size as needed */
+    }
+
+input[type=range] {
+
+        width: 400px; /* Adjust the width as needed */
+        height: 50px; /* Adjust the height as needed */
+        font-size: 20px; /* Adjust the font size as needed */
+        margin-left: -200px;
+    }
+
+/* Add styles for .controls-container */
+.controls-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px; /* Adjust margin as needed */
+        /* padding-left: 20px; Adjust left padding */
+        /* padding-right: 20px; Adjust right padding */
+    }
+
+    #textwidth{width: 50%;
+        word-wrap: break-word;
+        background-color: #fef5e7
+
+
+}
+
+   @media screen and (max-width: 600px) {
+    .controls-container {
+        flex-direction: column; /* Stack elements vertically */
+        align-items: flex-start; /* Align elements to the start of the container */
+    }
+
+    .controls-container input[type=range] {
+        margin-left: 0; /* Reset the left margin */
+        margin-top: 10px; /* Add top margin to separate from the selector */
+    }
+}
+body {
+    background-color: #fdebd0;
+}
+   
+    </style>
+    
+    <div class="controls-container">
+<select id="dataSelect">
+        <option value="NetReturns">Number of Households</option>
+        <option value="NetIndividuals">Number of Individuals</option>
+        <option value="realNETAGI"><p>Gross Income(Thousands of $)</p></option>
+        <option value="Sign">Income Per Household</option>
+    </select>
+
+    
+  
+    <input type="range" name="year" value="2012" min="2012" max="2021" oninput="moveSlider(this.value)">
+    <h3 id="theYears">2012</h3>
+</div>
+
+<div id = "textwidth">
+<h3><a href="https://www.irs.gov/statistics/soi-tax-stats-migration-data" style="text-decoration: none;">Understanding the IRS Migration Data and the Variables</a></h3>
+<p>To generate migration data, the IRS compares the locations listed on tax returns from one year to another.
+    For example, if a household files a tax return in 2020 and lists their address as Denver, CO, and the same filer in 2021
+    lists their address as Chapel Hill, NC, the IRS compares these returns and considers the household to have moved, i.e.,
+    to be a household that has migrated from Denver County to Orange County. One advantage of IRS migration data, compared to the American Community Survey migration data 
+    created by the U.S. Census Bureau, is that the IRS data is not survey data. Instead, the IRS data looks at all the tax returns filed in the U.S.
+    While not everyone in the U.S. is required to file a tax return, most people do. The IRS migration data set is nearly comprehsive and is organized on a county by county basis.
+    For this map, I have created net migration numbers with IRS migration data published from 2011 thru 2021.
+</p>
+<h4>Net Households</h4>
+<p>The IRS treats a tax return as a proxy for a household. If a married couple files their taxes jointly in 2018 and the couple moves to another county in 2019, the IRS data will count this as a single household migrating.</p>
+
+<h4>Net Individuals</h4>
+
+<h4>Net Adjusted Gross Income &#40AGI&#41</h4>
+
+<h4>Net Income Per Household</h4>
+
+</div>
+    
+
+   
+    
+    <!-- Script for handling dropdown change and updating legend -->
+    <script> 
+
+        // Get the selector element
+        var dataSelect = document.getElementById('dataSelect');
+
+        // Set the value of the selector to "NetHouseholds"
+        dataSelect.value = 'NetReturns';
+
+          // Get the slider element
+    var yearSlider = document.querySelector('input[type="range"][name="year"]');
+
+// Set the value of the slider to its minimum value
+yearSlider.value = yearSlider.min;
+
+
+
+        var selectElement = document.getElementById('dataSelect');
+    
+        selectElement.addEventListener('change', function() {
+            var selectedValue = selectElement.value;
+            updateLegend(selectedValue);
+        });
+
+        function updateLegend(selectedData) {
+            var legend = document.querySelector('.legend');
+            legend.innerHTML = '';
+
+            var colorScheme = {
+                'NetReturns': ['#4d9221', '#7fbc41', '#b8e186', '#f7f7f7', '#fde0ef', '#de77ae'],
+                'NetIndividuals': ['#1b7837', '#5aae61', '#a6dba0', '#f7f7f7', '#e7d4e8', '#9970ab'],
+                'realNETAGI': ['#2d004b', '#8073ac', '#b2abd2', '#f7f7f7', '#fee0b6', '#fdb863'],
+                'Sign': ['#003c30', '#35978f', '#80cdc1', '#f7f7f7', '#f6e8c3', '#bf812d']
+            };
+
+
+            var valueRanges = {
+                'NetReturns': ['More than 300', '50 to 299', '1 to 49', '0', '-1 to -20', 'Less than-20'],
+                'NetIndividuals': ['More than 600', '200 to 599', '1 to 199', '0', '-1 to -50', 'Less than -50'],
+                'realNETAGI': ['More than 20,000','1,000 to 19,999' , '1 to 999', '0', '-1 to -1000', 'Less than -1000'],
+                'Sign': ['More than 5,000','300 to 4,999', '60 to 299', '0', '-1 to -60', 'Less than -60']
+            };
+
+
+
+            for (var i = 0; i < colorScheme[selectedData].length; i++) {
+                legend.innerHTML += '<div><span style="background-color:' + colorScheme[selectedData][i] + '"></span>' +
+                    valueRanges[selectedData][i] + '</div>';
+            }
+        }
+    </script>
+
+    <!-- JavaScript code for Leaflet map -->
+    <script>  
+        var map = L.map('map').setView([37.5, -100], 3.5);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+
+         // Append legend to the map container
+    var legend = L.control({position: 'bottomright'});
+
+legend.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'legend');
+    // Add legend content here
+    return div;
+};
+
+legend.addTo(map);
+
+// Update legend with default data ("NetReturns")
+updateLegend("NetReturns");
+
+
+
+
+// Rest of your JavaScript code...
+
+        var selectedYear = 2012; // Initialize selectedYear
+        var selectedData = 'NetReturns';
+
+        function moveSlider(value) {
+            selectedYear = value;
+            document.getElementById('theYears').innerHTML = selectedYear;
+            updateMap();
+        }
+
+        document.getElementById('dataSelect').addEventListener('change', function() {
+            selectedData = this.value;
+            updateMap();
+        });
+
+        function updateMap() {
+            map.eachLayer(function(layer) {
+                if (layer instanceof L.GeoJSON) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            // Add new layers for the selected year
+            Counties.features.forEach(function(feature) {
+     L.geoJSON(feature, {
+        style: function(feature) { return myStyle(feature, selectedData); },
+        onEachFeature: function (feature, layer) {
+            var dataValue = feature.properties[selectedData + selectedYear];
+            if (dataValue !== null) {
+                dataValue = parseFloat(dataValue).toFixed(2); // Convert to float and fix to 2 decimal places
+            }
+            
+            var popupContent = '<h2>' + feature.properties.NAME + '</h2>' +
+                '<p>' + selectedData + ': ' + dataValue + '</p>';
+
+            // Customize the popup content based on the selectedData
+            if (selectedData.toLowerCase() === 'netreturns') {
+                popupContent = '<h2>' + feature.properties.NAME + '</h2>' +
+                '<p>Net # of Households: ' + dataValue + '</p>';
+                
+            }
+            else if (selectedData.toLowerCase() === 'netindividuals') {
+                popupContent = '<h2>' + feature.properties.NAME + '</h2>' +
+                '<p>Net # of Individuals: ' + dataValue + '</p>';
+            }
+            else if (selectedData.toLowerCase() === 'realnetagi') {
+                popupContent = '<h2>' + feature.properties.NAME + '</h2>' +
+                '<p>Net Adj. Gross Income (Thousands of $): ' + dataValue + '</p>';
+            }
+            else if (selectedData.toLowerCase() === 'sign') {
+                popupContent = '<h2>' + feature.properties.NAME + '</h2>' +
+                '<p>Per Household Income (Thousands of $): ' + dataValue + '</p>';
+            }
+           
+            if (feature.properties.GEOID === '37037' || feature.properties.GEOID === '37063' || feature.properties.GEOID === '37069' ||
+                feature.properties.GEOID === '37077' || feature.properties.GEOID === '37101' || feature.properties.GEOID === '37135' ||
+                feature.properties.GEOID === '37145' || feature.properties.GEOID === '37183') {
+                popupContent = '<h2>' + feature.properties.NAME + '</h2>' +
+                    '<p>County Part of Raleigh/Durham Metro Area</p>';
+            }
+
+            layer.bindPopup(popupContent);
+        }
+    }).addTo(map);
+});
+
+        }
+       
+        function myStyle(feature, selectedData) {
+    var propertyName = selectedData + selectedYear;
+    var propertyValue = feature.properties[propertyName];
+    if (feature.properties.GEOID === '37037' || feature.properties.GEOID === '37063' || feature.properties.GEOID === '37069' ||
+    feature.properties.GEOID === '37077'|| feature.properties.GEOID === '37101' ||feature.properties.GEOID === '37135' ||
+    feature.properties.GEOID === '37145'||feature.properties.GEOID === '37183'){
+        // Return the style for the specified counties
+        return {
+            "fillColor": "#252525", 
+            "color": "black", 
+            "weight": .25,
+            "opacity": 0.5,
+            "fillOpacity": 0.5
+        };
+    } else {
+        var colorScheme = {
+            'NetReturns': getColorForNetReturns(propertyValue),
+            'NetIndividuals': getColorForNetIndividuals(propertyValue),
+            'realNETAGI': getColorForRealNetAGI(propertyValue),
+            'Sign': getColorForPerHouseholdIncomeFlow(propertyValue)
+        };
+
+        return {
+            "fillColor": colorScheme[selectedData],
+            "color": "white",
+            "weight": 0.4,
+            "opacity": 0.5,
+            "fillOpacity": 0.85
+        };
+    }
+}
+
+
+        function getColorForNetReturns(propertyValue) {
+            if (propertyValue === null) {
+                return "rgb(214, 219, 223, .8)"; // Gray color for null values
+            } else {
+                return propertyValue < -21 ? '#de77ae':
+                    propertyValue <0 ? "#fde0ef" :
+                    propertyValue == 0 ? "#f7f7f7" :
+                    propertyValue < 50 ? "#e6f5d0" :
+                    propertyValue < 300 ? "#7fbc41" :
+                    propertyValue < 500 ? "#4d9221" :
+                    "#200035";
+            }
+        }
+
+        function getColorForNetIndividuals(propertyValue) {
+            if (propertyValue === null) {
+                return "rgb(214, 219, 223, .8)"; // Gray color for null values
+            } else {
+                return propertyValue < -51 ? '#9970ab':
+                    propertyValue <0 ? "#e7d4e8" :
+                    propertyValue == 0 ? "#f7f7f7" :
+                    propertyValue < 200 ? "#a6dba0" :
+                    propertyValue < 600 ? "#5aae61" :
+                    propertyValue < 1000 ? "#1b7837" :
+                    "red";
+            }
+        }
+
+        function getColorForRealNetAGI(propertyValue) {
+            if (propertyValue === null) {
+                return "rgb(214, 219, 223, .8)";
+                // Gray color for null values
+            } else {
+                return propertyValue < -1000 ? '#fdb863':
+                    propertyValue <0 ? "#fee0b6" :
+                    propertyValue == 0 ? "#f7f7f7" :
+                    propertyValue < 1000? "#b2abd2" :
+                    propertyValue < 20000 ? "#8073ac" :
+                    propertyValue < 65000 ? "#2d004b" :
+                    "red";
+            }
+        }
+
+        function getColorForPerHouseholdIncomeFlow(propertyValue) {
+            if (propertyValue === null || isNaN(propertyValue)) {
+                return "rgb(214, 219, 223, .8)"; // Gray color for null values
+            } else {
+                return propertyValue < -60 ? '#bf812d':
+                    propertyValue <0 ? "#f6e8c3" :
+                    propertyValue == 0 ? "#f7f7f7" :
+                    propertyValue < 60? "#80cdc1" :
+                    propertyValue < 300 ? "#35978f" :
+                    propertyValue < 5000 ? "#003c30" :
+                    "red";
+            }
+        }
+
+        updateMap();
+
+        
+        
+
+
+    </script>
+
+</body>
+</html>

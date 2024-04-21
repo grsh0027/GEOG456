@@ -20,24 +20,55 @@
 
     <div id="map"></div>
     
+    
     <style>#map { height: 500px; width: 600px }</style>
 
+    <h3 id="theYears">2012</h3>
     <input type="range" name="year" value="2012" min="2012" max="2021" oninput="moveSlider(this.value)">
     <div class="legend"></div>
    
 
     
-    
+
    
     <select id="dataSelect">
         <option value="NetReturns">NetReturns</option>
         <option value="NetIndividuals">NetIndividuals</option>
-        <option value="realNETAGI">realNetAGI</option>
-        <option value="Sign">Sign</option>
+        <option value="realNETAGI">NetAGI</option>
+        <option value="Sign">NetIncomeFlowPerHousehold</option>
+
+
+
+
+         Map container
+    <div id="map"></div>
+
+    <!-- Style for map and legend -->
+    <style>
+        #map { height: 500px; width: 600px }
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 12px;
+        }
+        .legend div {
+            margin-bottom: 5px;
+        }
+        .legend span {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+    </style>
 
     </select>
     
-    <!-- //Added Script form Stack exchange -->
+    <!-- //Added Script from Stack exchange -->
     <script> 
 
 
@@ -63,7 +94,7 @@
     
 </script>
     
-    
+
 
     <script>  
         var map = L.map('map').setView([39.6, -97.6], 3.35);
@@ -79,6 +110,7 @@
 
         function moveSlider(value) {
             selectedYear = value; // Update the selectedYear when the slider value changes
+            document.getElementById('theYears').innerHTML = [selectedYear]
             
             updateMap(); // Call a function to update the map based on the new selected year
         }
@@ -136,9 +168,9 @@
 
     return {
         "fillColor": colorScheme[selectedData],
-        "color": "black",
-        "weight": 0.75,
-        "opacity": 2.0,
+        "color": "white",
+        "weight": 0.5,
+        "opacity": 0.5,
         "fillOpacity": 0.7
     };
 }
@@ -153,6 +185,7 @@ function getColorForNetReturns(propertyValue) {
             propertyValue < 100 ? "#cf9ef1" :
             propertyValue < 600 ? "#8309d8" :
             "#200035";
+
     }
 }
 
@@ -210,6 +243,56 @@ function getColorForPerHouseholdIncomeFlow(propertyValue) {
 
         updateMap();
 
+
+
+//LEGEND
+
+// Define a function to update the legend based on the selected data
+function updateLegend(selectedData) {
+    var legend = document.querySelector('.legend');
+    legend.innerHTML = ''; // Clear existing legend
+
+    // Define the legend content based on the selected data
+    var legendContent = '';
+
+    // Define color schemes and value ranges for each data type
+    var colorScheme = {
+        'NetReturns': ['#200035', '#8309d8', '#cf9ef1', '#eddafa', '#f5fa7c'],
+        'NetIndividuals': ['#200035', '#8309d8', '#cf9ef1', '#eddafa', '#f5fa7c'],
+        'realNETAGI': ['#200035', '#8309d8', '#cf9ef1', '#eddafa', '#f5fa7c'],
+        'Sign': ['#200035', '#8309d8', '#cf9ef1', '#eddafa', '#f5fa7c']
+    };
+
+    var valueRanges = {
+        'NetReturns': ['>= 600', '100 - 600', '10 - 100', '0 - 10', 'Null'],
+        'NetIndividuals': ['>= 600', '100 - 600', '10 - 100', '0 - 10', 'Null'],
+        'realNETAGI': ['>= 10000', '1000 - 10000', '500 - 1000', '0 - 500', 'Null'],
+        'Sign': ['>= 100', '50 - 100', '25 - 50', '0 - 25', 'Null']
+    };
+
+    // Loop through color schemes and value ranges to generate legend content
+    for (var i = 0; i < colorScheme[selectedData].length; i++) {
+        legendContent += '<div><span style="background-color:' + colorScheme[selectedData][i] + '"></span>' +
+            valueRanges[selectedData][i] + '</div>';
+    }
+
+    // Update legend with the generated content
+    legend.innerHTML = legendContent;
+}
+
+// Add an event listener to the dropdown menu to update legend
+document.getElementById('dataSelect').addEventListener('change', function() {
+    var selectedValue = this.value;
+    updateLegend(selectedValue);
+});
+
+// Call the updateLegend function initially with the default selected data
+updateLegend(selectedData);
+
+
+
+
+        
     </script>
 
 </body>

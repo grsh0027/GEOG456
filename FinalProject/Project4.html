@@ -22,18 +22,19 @@
     
     <style>#map { height: 500px; width: 600px }</style>
 
+    <h3 id="theYears">2012</h3>
     <input type="range" name="year" value="2012" min="2012" max="2021" oninput="moveSlider(this.value)">
     <div class="legend"></div>
    
 
     
-    
+
    
     <select id="dataSelect">
         <option value="NetReturns">NetReturns</option>
         <option value="NetIndividuals">NetIndividuals</option>
-        <option value="realNETAGI">realNetAGI</option>
-        <option value="Sign">Sign</option>
+        <option value="realNETAGI">NetAGI</option>
+        <option value="Sign">NetIncomeFlowPerHousehold</option>
 
     </select>
     
@@ -63,7 +64,7 @@
     
 </script>
     
-    
+
 
     <script>  
         var map = L.map('map').setView([39.6, -97.6], 3.35);
@@ -79,6 +80,7 @@
 
         function moveSlider(value) {
             selectedYear = value; // Update the selectedYear when the slider value changes
+            document.getElementById('theYears').innerHTML = [selectedYear]
             
             updateMap(); // Call a function to update the map based on the new selected year
         }
@@ -136,9 +138,9 @@
 
     return {
         "fillColor": colorScheme[selectedData],
-        "color": "black",
-        "weight": 0.75,
-        "opacity": 2.0,
+        "color": "white",
+        "weight": 0.5,
+        "opacity": 0.5,
         "fillOpacity": 0.7
     };
 }
@@ -153,6 +155,7 @@ function getColorForNetReturns(propertyValue) {
             propertyValue < 100 ? "#cf9ef1" :
             propertyValue < 600 ? "#8309d8" :
             "#200035";
+
     }
 }
 
@@ -210,6 +213,14 @@ function getColorForPerHouseholdIncomeFlow(propertyValue) {
 
         updateMap();
 
+
+
+
+
+      
+
+
+        
     </script>
 
 </body>

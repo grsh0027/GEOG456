@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Migration Raleigh/Durham Metros</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+
+    <script src="./Counties.js"></script>
+</head>
+
+<body>
+
+    <!-- Map container -->
+    <div id="map"></div>
+
+    <style>
+        /* Style for map container */
+        #map { height: 500px; width: 600px }
+    
+        /* Style for legend */
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 12px;
+        }
+        .legend div {
+            margin-bottom: 5px;
+        }
+        .legend span {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+
+
+        #dataSelect {
+        width: 300px; /* Adjust the width as needed */
+        height: 50px; /* Adjust the height as needed */
+        font-size: 20px; /* Adjust the font size as needed */
+    }
+
+    input[type=range] {
+        width: 600px; /* Adjust the width as needed */
+    }
+
+   
+    </style>
+    
+
+    <h3 id="theYears">2012</h3>
+    <input type="range" name="year" value="2012" min="2012" max="2021" oninput="moveSlider(this.value)">
+    <div class="legend"></div>
+
+    <select id="dataSelect">
+        <option value="NetReturns">NetReturns</option>
+        <option value="NetIndividuals">NetIndividuals</option>
+        <option value="realNETAGI">NetAGI</option>
+        <option value="Sign">NetIncomeFlowPerHousehold</option>
+    </select>
+    
+    <!-- Script for handling dropdown change and updating legend -->
+    <script> 
+        var selectElement = document.getElementById('dataSelect');
+    
+        selectElement.addEventListener('change', function() {
+            var selectedValue = selectElement.value;
+            updateLegend(selectedValue);
+        });
+
+        function updateLegend(selectedData) {
+            var legend = document.querySelector('.legend');
+            legend.innerHTML = '';
+
+            var colorScheme = {
+                'NetReturns': ['#200035', '#8309d8', '#cf9ef1', '#eddafa', '#f5fa7c'],
+                'NetIndividuals': ['#200035', '#8309d8', '#cf9ef1', '#eddafa', '#f5fa7c'],
+                'realNETAGI': ['#200035', '#8309d8', '#cf9ef1', '#eddafa', '#f5fa7c'],
+                'Sign': ['#200035', '#8309d8', '#cf9ef1', '#eddafa', '#f5fa7c']
+            };
+
+            var valueRanges = {
+                'NetReturns': ['>= 600', '100 - 600', '10 - 100', '0 - 10', 'Null'],
+                'NetIndividuals': ['>= 600', '100 - 600', '10 - 100', '0 - 10', 'Null'],
+                'realNETAGI': ['>= 10000', '1000 - 10000', '500 - 1000', '0 - 500', 'Null'],
+                'Sign': ['>= 100', '50 - 100', '25 - 50', '0 - 25', 'Null']
+            };
+
+            for (var i = 0; i < colorScheme[selectedData].length; i++) {
+                legend.innerHTML += '<div><span style="background-color:' + colorScheme[selectedData][i] + '"></span>' +
+                    valueRanges[selectedData][i] + '</div>';
+            }
+        }
+    </script>
+
+    <!-- JavaScript code for Leaflet map -->
+    <script>  
+        var map = L.map('map').setView([39.6, -97.6], 3.35);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+         // Append legend to the map container
+    var legend = L.control({position: 'bottomright'});
+
+legend.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'legend');
+    // Add legend content here
+    return div;
+};
+
+legend.addTo(map);
+
+// Update legend with default data ("NetReturns")
+updateLegend("NetReturns");
+
+
+
+
+// Rest of your JavaScript code...
+
+        var selectedYear = 2012; // Initialize selectedYear
+        var selectedData = 'NetReturns';
+
+        function moveSlider(value) {
+            selectedYear = value;
+            document.getElementById('theYears').innerHTML = selectedYear;
+            updateMap();
+        }
+
+        document.getElementById('dataSelect').addEventListener('change', function() {
+            selectedData = this.value;
+            updateMap();
+        });
+
+        function updateMap() {
+            map.eachLayer(function(layer) {
+                if (layer instanceof L.GeoJSON) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            Counties.features.forEach(function(feature) {
+                L.geoJSON(feature, {
+                    style: function(feature) { return myStyle(feature, selectedData); },
+                    onEachFeature: function (feature, layer) {
+                        layer.bindPopup('<h2>' + feature.properties.NAME + '</h2>' +
+                        '<p>' + selectedData + ': ' + feature.properties[selectedData + selectedYear] + '</p>');
+                        if (selectedData.toLowerCase() === 'netreturns') {
+                popupContent = '<h2>' + feature.properties.NAME + '</h2>' +
+                '<p>Custom Text: ' + feature.properties[selectedData + selectedYear] + '</p>';
+                
+            }
+            else if (selectedData.toLowerCase() === 'sign') {
+                popupContent = '<h2>' + feature.properties.NAME + '</h2>' +
+                '<p>Custom Text for sign: ' + feature.properties[selectedData + selectedYear] + '</p>';
+            }
+
+            layer.bindPopup(popupContent);
+        }
+                }).addTo(map);
+            });
+        }
+       
+        function myStyle(feature, selectedData) {
+            var propertyName = selectedData + selectedYear;
+            var propertyValue = feature.properties[propertyName];
+
+            var colorScheme = {
+                'NetReturns': getColorForNetReturns(propertyValue),
+                'NetIndividuals': getColorForNetIndividuals(propertyValue),
+                'realNETAGI': getColorForRealNetAGI(propertyValue),
+                'Sign': getColorForPerHouseholdIncomeFlow(propertyValue)
+            };
+
+            return {
+                "fillColor": colorScheme[selectedData],
+                "color": "white",
+                "weight": 0.5,
+                "opacity": 0.5,
+                "fillOpacity": 0.7
+            };
+        }
+
+        function getColorForNetReturns(propertyValue) {
+            if (propertyValue === null) {
+                return "#CCCCCC"; // Gray color for null values
+            } else {
+                return propertyValue < 0 ? "#f5fa7c" :
+                    propertyValue < 10 ? "#eddafa" :
+                    propertyValue < 100 ? "#cf9ef1" :
+                    propertyValue < 600 ? "#8309d8" :
+                    "#200035";
+            }
+        }
+
+        function getColorForNetIndividuals(propertyValue) {
+            if (propertyValue === null) {
+                return "#CCCCCC"; // Gray color for null values
+            } else {
+                return propertyValue < 0 ? "#f5fa7c" :
+                    propertyValue < 10 ? "#eddafa" :
+                    propertyValue < 100 ? "#cf9ef1" :
+                    propertyValue < 600 ? "#8309d8" :
+                    "#200035";
+            }
+        }
+
+        function getColorForRealNetAGI(propertyValue) {
+            if (propertyValue === null) {
+                return "#CCCCCC"; // Gray color for null values
+            } else {
+                return propertyValue < 0 ? "#f5fa7c" :
+                    propertyValue < 500 ? "#eddafa" :
+                    propertyValue < 1000 ? "#cf9ef1" :
+                    propertyValue < 10000 ? "#8309d8" :
+                    "#200035";
+            }
+        }
+
+        function getColorForPerHouseholdIncomeFlow(propertyValue) {
+            if (propertyValue === null) {
+                return "#CCCCCC"; // Gray color for null values
+            } else {
+                return propertyValue < 0 ? "#f5fa7c" :
+                    propertyValue < 25 ? "#eddafa" :
+                    propertyValue < 50 ? "#cf9ef1" :
+                    propertyValue < 100 ? "#8309d8" :
+                    "#200035";
+            }
+        }
+
+        updateMap();
+    </script>
+
+</body>
+</html>
