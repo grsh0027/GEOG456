@@ -21,6 +21,7 @@
             margin-bottom: 0px;
             text-align: center; /* Reduce margin-bottom */
             font-size: 20pt;
+            font-family: Arial, Helvetica, sans-serif;
         }
 
         h2 {
@@ -28,14 +29,20 @@
             margin-bottom: 2.5px;
             text-align: center;
             font-size: 16pt;
+            font-family: Arial, Helvetica, sans-serif;
             
         }
         h3{margin-top: 0px; /* Reduce margin-top */
-            margin-bottom: 4px;}
-        h6{font-size: 14pt;}
+            margin-bottom: 4px;
+            font-family: Arial, Helvetica, sans-serif}
+        
+        h4{font-family: Arial, Helvetica, sans-serif}
+        h6{font-size: 14pt;
+            font-family: Arial, Helvetica, sans-serif}
         p{font-size: 12pt;
             margin-top: 0px; /* Reduce margin-top */
-            margin-bottom: 2.5px; }
+            margin-bottom: 2.5px; 
+            font-family: Arial, Helvetica, sans-serif}
     </style>
 </head>
 
@@ -142,16 +149,20 @@ body {
     to be a household that has migrated from Denver County to Orange County. One advantage of IRS migration data, compared to the American Community Survey migration data 
     created by the U.S. Census Bureau, is that the IRS data is not survey data. Instead, the IRS data looks at all the tax returns filed in the U.S.
     While not everyone in the U.S. is required to file a tax return, most people do. The IRS migration data set is nearly comprehsive and is organized on a county by county basis.
-    For this map, I have created net migration numbers with IRS migration data published from 2011 thru 2021.
+    For this map, I have created net migration numbers with IRS migration data published from 2012 thru 2021.
 </p>
+<p><br>*All NULL data values indicate there was no reported migration in the IRS dataset*</p>
 <h4>Net Households</h4>
 <p>The IRS treats a tax return as a proxy for a household. If a married couple files their taxes jointly in 2018 and the couple moves to another county in 2019, the IRS data will count this as a single household migrating.</p>
 
 <h4>Net Individuals</h4>
+<p>When a taxpayer files their taxes, their tax return form includes tax exemptions. Spouses and dependents qualify for tax exemptions, so the IRS treats exemptions as a proxy for individuals.</p>
 
 <h4>Net Adjusted Gross Income &#40AGI&#41</h4>
+<p>The IRS aggregates the incomes of migrants based on their Adjusted Gross Income, i.e., their gross taxable income after all tax deductions have been applied. The Net AGI is reported in thousands of dollars.</p>
 
 <h4>Net Income Per Household</h4>
+<p>The Net Income Per Household is an index that takes the Net Adjusted Gross Income divided by Net Households. This provides an approximate income for migrants on a normalized basis. The Net Income Per Household data is displayed in thousands of dollars.</p>
 
 </div>
     
