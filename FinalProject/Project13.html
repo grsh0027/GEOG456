@@ -198,7 +198,7 @@ yearSlider.value = yearSlider.min;
             legend.innerHTML = '';
 
             var colorScheme = {
-                'NetReturns': ['#4d9221', '#7fbc41', '#b8e186', '#f7f7f7', '#fde0ef', '#de77ae'],
+                'NetReturns': ['#276419', '#7fbc41', '#b8e186', '#f7f7f7', '#fde0ef', '#de77ae'],
                 'NetIndividuals': ['#1b7837', '#5aae61', '#a6dba0', '#f7f7f7', '#e7d4e8', '#9970ab'],
                 'realNETAGI': ['#2d004b', '#8073ac', '#b2abd2', '#f7f7f7', '#fee0b6', '#fdb863'],
                 'Sign': ['#003c30', '#35978f', '#80cdc1', '#f7f7f7', '#f6e8c3', '#bf812d']
@@ -356,9 +356,9 @@ updateLegend("NetReturns");
                 return propertyValue < -21 ? '#de77ae':
                     propertyValue <0 ? "#fde0ef" :
                     propertyValue == 0 ? "#f7f7f7" :
-                    propertyValue < 50 ? "#e6f5d0" :
+                    propertyValue < 50 ? "#b8e186" :
                     propertyValue < 300 ? "#7fbc41" :
-                    propertyValue < 500 ? "#4d9221" :
+                    propertyValue < 500 ? "#276419" :
                     "#200035";
             }
         }
